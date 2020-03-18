@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="css/cropList.css"/>
+</head>
+<body>
+<div id="haha">
+    <div id="inner">
+        <ul>
+            <li class="cropList clearfix">
+                <img src="image/logo.gif">
+                <div class="clearfix" v-for="(item,index) in crops" :key="index" v-cloak>
+                    <div class="leftPannel clearfix">
+                        <div>
+                            <img :src="'image/'+item[1]" />
+                        </div>
+                        <span><strong>{{item[0]}}</strong></span>
+                    </div>
+                    <div class="rightPannel clearfix" >
+                        <div v-for="(value,key,index) in item[2]" :key="index">
+                            <a  href="#" @click.prevent="newWindow(value,key)">
+                                {{key}}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+
+
+
+
+    <script src="js/vue/vue.js"></script>
+    <!-- 官网提供的 axios 在线地址 -->
+    <script src="js/vue/axios.js"></script>
+    <script>
+        var dx = new Vue({
+                   el:"#inner",
+                   data:{
+                        crops:[]
+                   },
+                   methods:{
+                       newWindow(value,key){
+                           var url = 'http://localhost:63343/cropIndex/cropInfo.html?crop=' + value+'&name='+key;
+                           var style = "height=700px,width=1100px,left=300px,top=100px"
+                            window.open(url,"",style);
+                        },
+                    },
+                    mounted(){
+                        axios.get("http://localhost:8080/test/allCropList").then(res=>{
+                                this.crops=res.data;
+                            })
+                    }
+               })
+
+    </script>
+</body>
+</html>

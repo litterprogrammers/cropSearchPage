@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+	</head>
+	<link rel="stylesheet"  type="text/css" href="css/cropInfo.css" />
+	<body>
+		<div id="pannel">
+			
+			<div id="content">
+				<div id="top">
+					<img src="image/logo.gif"/>
+					<div>
+						<ul>
+							<button>显示查询窗口</button>-
+							<button>显示结果窗口</button>
+							<li><span>{{cropName}}-资源查询</span></li>
+							<li><a href="">打印</a></li>
+							<li><a href="">打印</a></li>
+							<li><a href="">打印</a></li>
+						</ul>
+					</div>
+				</div>
+				<div id="main">
+					<div >
+						<ul>
+							<li><span v-cloak>共找到{{count}}个结果|</span></li>
+							<li><a href="" @click.prevent="firstPage">第一页</a></li>
+							<li><a href="" @click.prevent="prePage" :class="{'disable':pageNumber==1}">上一页</a></li>
+							<li><a href="" @click.prevent="nextPage" :class="{'disable':pageNumber==count}">下一页</a></li>
+							<li><a href="" @click.prevent="lastPage">最后一页</a></li>
+							<li><a href="" @click.prevent="getPage">跳转</a><input type="text" v-model.lazy="textPage" /></li>
+							<li><span>当前{{pageNumber}}页</span></li>
+						</ul>
+					</div>
+					<table>
+						<tr v-for="(item,index) in data1" :key="index" v-cloak>
+							<td>{{item[0]}}</td>
+							<td>{{item[1]}}</td>
+							<td>{{item[2]}}</td>
+							<td>{{item[3]}}</td>
+							<td>{{item[4]}}</td>
+							<td>{{item[5]}}</td>
+						</tr>
+					</table>
+				</div>
+				
+				<div id="bottom"><span>版权所属：覅撒毒犯十大你吃的南昌市电脑城南区欧式迟到啊你从事农村的那种你才可能</span></div>
+			</div>
+
+		</div> 
+		<script src="js/vue/axios.js"></script>
+		<script src="js/vue/vue.js"></script>
+		<script src="js/cropInfo.js"></script>
+		<script > 
+
+			var s = new Vue({
+				el:"#pannel",
+				data:{
+					data1: [],
+					count:0,
+					pageNumber:1,
+					textPage:1,
+					cropName:"wheat",
+				},
+				methods:{
+					firstPage(){
+						this.pageNumber=1;
+						this.jumpPage(this.pageNumber);
+					},
+					prePage(){
+						this.pageNumber--;
+						this.jumpPage(this.pageNumber);
+					},
+					nextPage(){
+						this.pageNumber++;
+						this.jumpPage(this.pageNumber);
+					},
+					lastPage(){
+						this.pageNumber=this.count;
+						this.jumpPage(this.pageNumber);
+					},
+					getPage(){
+						this.pageNumber=this.textPage;
+						this.jumpPage(this.pageNumber);
+					},
+					jumpPage(Number){
+						var str = getstr(window.location.href);
+						axios.get("http://localhost:8080/test/cropList?"+str+"&pageNumber="+Number).then((dataArr2)=>{
+							var finalStr = replaceNull(dataArr2.data)
+							dataAlter(this.data1,finalStr);
+						})
+					}
+				},
+				watch:{
+					textPage:function (val,oldval) {
+						var reg = new RegExp(/^[0-9]+$/);
+							if(reg.test(val)&&(parseInt(val)>=1&&parseInt(val)<=this.count)){
+							}else{
+								this.textPage=oldval;
+								alert("请输入1-"+this.count+"长度的数字")
+							}
+					},
+				},
+				mounted(){
+					var str = getstr(window.location.href);
+					var arr = getarr(window.location.href);
+					this.cropName=decodeURIComponent(arr.name);
+					axios.get("http://localhost:8080/test/cropNameList?"+str).then((dataArr1)=>{
+						axios.get("http://localhost:8080/test/cropList?"+str+"&pageNumber="+this.pageNumber).then((dataArr2)=>{
+							var colName = (dataArr1.data)[1].split(",");
+							var colData = replaceNull(dataArr2.data)
+							var finalData = dataOk(colName,colData)
+							this.data1 = finalData;
+							this.count = (dataArr1.data)[0];
+						})
+					})
+				}
+			})
+		</script>
+	</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

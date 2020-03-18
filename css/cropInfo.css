@@ -1,0 +1,124 @@
+* {
+	padding: 0;
+	margin: 0;
+}
+
+html,
+body,
+#pannel {
+	width: 100%;
+	height: 100%;
+}
+
+#pannel {
+	position: relative;
+}
+
+#content {
+	position: absolute;
+	top: 20px;
+	left: 50%;
+	transform: translate(-50%);
+	background-color: white;
+}
+
+#top div ul {
+	display: flex;
+	list-style: none;
+	font-size: 14px;
+	line-height: 22px;
+	text-align: center;
+	border-bottom: 1px solid black;
+}
+
+#top div ul li {
+	margin-left: 10px;
+}
+
+#top div ul li a {
+	text-decoration: none;
+	color: blue;
+}
+
+#top img {
+	width: 220px;
+	height: 60px;
+}
+
+#main table {
+	border-collapse: collapse;
+}
+
+#main table {
+	table-layout: fixed;
+	font-size: 11px;
+}
+
+#main table tr td {
+	background-color: gainsboro;
+	width: 100px;
+	height: 20px;
+	white-space: nowrap;
+}
+
+#main table tr:nth-child(even) td:nth-child(even) {
+	background-color: white;
+}
+
+#main table tr td:nth-child(even) {
+	padding-right: 70px;
+	font-size: 12px;
+}
+
+#main table tr td:nth-child(odd) {
+	font-weight: 700;
+	padding-right: 10px;
+}
+
+#main table tr:nth-child(odd) td:nth-child(odd) {
+	background: #C4C4C4;
+}
+
+#main table tr td {
+	border: 1px solid gainsboro;
+}
+
+#main>div ul {
+	display: flex;
+	list-style: none;
+	margin-bottom: 3px;
+}
+
+#main>div ul li {
+	margin-left: 3px;
+	line-height: 23px;
+	font-size: 12px;
+	text-align: center;
+}
+#main>div ul li a {
+	width: 40px;
+	height: 20px;
+	margin-right: 10px;
+	text-decoration: none;
+}
+
+
+#bottom {
+	text-align: center;
+}
+
+#bottom span {
+	margin-top: 50px;
+	display: inline-block;
+	font-size: 12px;
+	margin-bottom:50px ;
+}
+a.disable{
+	pointer-events: none;
+	filter: alpha(opacity=50); /*IE滤镜，透明度50%*/
+	-moz-opacity: 0.5; /*Firefox私有，透明度50%*/
+	opacity: 0.5; /*其他，透明度50%*/
+}
+[v-cloak] {
+	display: none;
+}
