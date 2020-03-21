@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+
+<body>
+    <div >
+
+      <form id="search" >
+
+            <table id="searchCrops">
+
+            </table>
+        </form>
+        <button id="btn1">anniu</button>
+        <button id="btn2">ssssss</button>
+    </div>
+
+
+<script src="../js/jquery/jquery-1.12.3.js"></script>
+
+<script>
+
+    $("#btn2").click(function () {
+        console.log($("#search").serializeArray())
+    })
+    $("#btn1").click(function () {
+        var str1 = ["列名1","列名2","列名3","列名4","列名5","列名6","列名7","列名4","列名4","列名343"];
+        var str2 = ["1-","asdf,assadf,ger,asdvgrdf,ssasdcdf","null","1-",
+            "1331-1313","1331-1313","asdf,assadf,ger,asdvgrdf,ssasdcdf","1331-1313","1331-1313","2221-1313"];
+
+        deilStr(str1,str2);
+    })
+    /*["列名1","列名2","列名3","列名4","列名5","列名6","列名7"]
+    ["1331-1313","asdf,assadf,ger,asdvgrdf,ssasdcdf","null","1331-1313",
+        "1331-1313","1331-1313","asdf,assadf,ger,asdvgrdf,ssasdcdf"]
+    * */
+    function deilStr(str1,str2){
+        /*获取tr个数，td个数默认为3*/
+        let dex = str1.length%3;
+        let length = dex==0?(str1.length/3):((str1.length-(dex))/3+1);
+        /*记录遍历位置*/
+        let count = -1;
+        for(let i = 0;i<length;i++){
+            /*创建table里面的tr*/
+            let tr = $("<tr></tr>")
+            /*for循环处理里面的td*/
+            for(let j = 0;j<3;j++){
+                /*先添加一个td再决定是否要添加内部元素*/
+                count++
+                /*如果角标数超过了数组就不加元素了*/
+                if(count<str1.length){
+                    /*创建列名列*/
+                    let td1 = $("<td></td>")
+                    td1.append(str1[count])
+
+                    /*判断三种模式*/
+                    let td2 = $("<td></td>")
+                    if(str2[count].indexOf("-")!=-1){
+
+                        let inputStr = "<input type='text' name="+str1[count]+">";
+                       /* let check = ""*/
+                        let selectButton = "<select name="+str1[count]+"><option value =\">\">></option>\n" +
+                        "                    <option value =\"<\"><</option>\n" +
+                        "                    <option value=\">=\">>=</option>\n" +
+                        "                    <option value=\"<=\"><=</option>\n" +
+                        "                    <option value=\"<>\"><></option>\n" +
+                        "                </select>"
+
+                        let imput = $(inputStr)
+                        imput.attr("placeholder","输入数字")
+
+                        td2.append(selectButton)
+                        td2.append(imput)
+
+                    }else if(str2[count].indexOf(",")!=-1){
+
+                        let arr = str2[count].split(",");
+                        //创建checkRadio字符串
+                        let checkRadio = "<form id='myForm'>"
+                        let dexCount=0;
+                        $.each(arr, function(i, item){
+                            dexCount++
+                            let itemstr = "<input type=\"checkbox\" name="+str1[count]+" value="+item+" >"+item
+                            checkRadio=checkRadio+itemstr
+                            if(dexCount==3){
+                                checkRadio =checkRadio+"</br>"
+                                dexCount=0
+                            }
+                        })
+                        checkRadio=checkRadio+"</form>";
+                        //封装成checkBox
+                        let checkBox = $(checkRadio)
+                        td2.css({
+                            "position":"relative"
+                        })
+
+
+
+                        checkBox.css({
+                            "position":"absolute",
+                            "display":"none",
+                            "backgroundColor":"red"
+                        })
+
+                        let tip = $("<input type='text' name="+str1[count]+" placeholder='请输入需要显示的种类'>")
+
+                        td2.append(tip)
+                        td2.append(checkBox)
+
+                            $(document).click(function () {
+                                checkBox.css({
+                                    "display":"none"
+                                })
+                                let result = checkBox.serializeArray();
+                                let receive = "";
+                                $.each(result,function (i,item) {
+                                    if(i==0){
+                                        receive = receive +  item.value
+                                    }else{
+                                        receive = receive +","+ item.value
+                                    }
+                                })
+                                tip.val(receive)
+                            })
+
+
+                        td2.click(function (event) {
+                            event.stopPropagation()
+                            checkBox.css({
+                                "display":"block",
+                                "top":"0px",
+                                "left":"0px"
+                            })
+                        })
+
+
+
+
+
+
+
+
+
+                    }else{
+                        let inputStr = "<input type='text' name="+str1[count]+">";
+                        let imput = $(inputStr)
+                        imput.attr("placeholder","输入编号")
+                        td2.append(imput)
+                    }
+                    /*当td处理完毕时添加进tr*/
+                    tr.append(td1);
+                    tr.append(td2);
+                }else{
+                    break;
+                }
+                /*当tr添加完毕时添加进table*/
+                $("#searchCrops").append(tr)
+            }
+
+
+        }
+
+
+    }
+
+</script>
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

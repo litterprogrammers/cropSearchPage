@@ -8,19 +8,18 @@
 	<link rel="stylesheet"  type="text/css" href="css/cropInfo.css" />
 	<body>
 		<div id="pannel">
-			
 			<div id="content">
 				<div id="top">
 					<img src="image/logo.gif"/>
 					<div>
 						<ul>
-							<button>显示查询窗口</button>-
-							<button>显示结果窗口</button>
-							<li><span>{{cropName}}-资源查询</span></li>
-							<li><a href="">打印</a></li>
-							<li><a href="">打印</a></li>
-							<li><a href="">打印</a></li>
-						</ul>
+						<button>显示查询窗口</button>-
+						<button>显示结果窗口</button>
+						<li><span>{{cropName}}-资源查询</span></li>
+						<li><a href="">打印</a></li>
+						<li><a href="">打印</a></li>
+						<li><a href="">打印</a></li>
+					</ul>
 					</div>
 				</div>
 				<div id="main">
@@ -108,6 +107,7 @@
 					var str = getstr(window.location.href);
 					var arr = getarr(window.location.href);
 					this.cropName=decodeURIComponent(arr.name);
+					//
 					axios.get("http://localhost:8080/test/cropNameList?"+str).then((dataArr1)=>{
 						axios.get("http://localhost:8080/test/cropList?"+str+"&pageNumber="+this.pageNumber).then((dataArr2)=>{
 							var colName = (dataArr1.data)[1].split(",");

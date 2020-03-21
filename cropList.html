@@ -35,7 +35,7 @@
 
 
 
-    <script src="js/vue/vue.js"></script>
+    <script src="js/vue/vuemin.js"></script>
     <!-- 官网提供的 axios 在线地址 -->
     <script src="js/vue/axios.js"></script>
     <script>
@@ -51,11 +51,11 @@
                             window.open(url,"",style);
                         },
                     },
-                    mounted(){
-                        axios.get("http://localhost:8080/test/allCropList").then(res=>{
-                                this.crops=res.data;
-                            })
-                    }
+                   mounted(){
+                       axios.get("http://localhost:8080/test/allCropList").then(res=>{
+                               this.crops=res.data;
+                           })
+                   }
                })
 
     </script>
