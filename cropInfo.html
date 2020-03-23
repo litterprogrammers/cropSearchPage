@@ -13,8 +13,8 @@
 					<img src="image/logo.gif"/>
 					<div>
 						<ul>
-						<button>显示查询窗口</button>-
-						<button>显示结果窗口</button>
+						<button @click="showMain2">显示查询窗口</button>-
+						<button @click="showMain1">显示结果窗口</button>
 						<li><span>{{cropName}}-资源查询</span></li>
 						<li><a href="">打印</a></li>
 						<li><a href="">打印</a></li>
@@ -22,15 +22,15 @@
 					</ul>
 					</div>
 				</div>
-				<div id="main">
-					<div >
+				<div id="main1" v-show="changeMainTable==1">
+					<div>
 						<ul>
 							<li><span v-cloak>共找到{{count}}个结果|</span></li>
 							<li><a href="" @click.prevent="firstPage">第一页</a></li>
 							<li><a href="" @click.prevent="prePage" :class="{'disable':pageNumber==1}">上一页</a></li>
 							<li><a href="" @click.prevent="nextPage" :class="{'disable':pageNumber==count}">下一页</a></li>
 							<li><a href="" @click.prevent="lastPage">最后一页</a></li>
-							<li><a href="" @click.prevent="getPage">跳转</a><input type="text" v-model.lazy="textPage" /></li>
+							<li><a href="" @click.prevent="getPage">跳转</a><input type="text" v-model.lazy="textPage" @keyup.enter="checkData" /></li>
 							<li><span>当前{{pageNumber}}页</span></li>
 						</ul>
 					</div>
@@ -45,15 +45,23 @@
 						</tr>
 					</table>
 				</div>
-				
+				<div id="main2" v-show="changeMainTable==2">
+					<form id="search" >
+						<table id="searchCrops">
+
+						</table>
+					</form>
+					<button id="btn2">提交</button>
+				</div>
 				<div id="bottom"><span>版权所属：覅撒毒犯十大你吃的南昌市电脑城南区欧式迟到啊你从事农村的那种你才可能</span></div>
 			</div>
-
-		</div> 
+		</div>
+		<script src="js/jquery/jquery-1.12.3.js"></script>
 		<script src="js/vue/axios.js"></script>
 		<script src="js/vue/vue.js"></script>
 		<script src="js/cropInfo.js"></script>
-		<script > 
+		<script >
+			let queryDex = ""
 
 			var s = new Vue({
 				el:"#pannel",
@@ -63,8 +71,21 @@
 					pageNumber:1,
 					textPage:1,
 					cropName:"wheat",
+					changeMainTable:2,
+					queryStr1:[],
+					queryStr2:[],
+					myQueryDex:"",
 				},
 				methods:{
+					checkData(){
+						this.getPage()
+					},
+					showMain1(){
+						this.changeMainTable=1
+					},
+					showMain2(){
+						this.changeMainTable=2
+					},
 					firstPage(){
 						this.pageNumber=1;
 						this.jumpPage(this.pageNumber);
@@ -83,13 +104,36 @@
 					},
 					getPage(){
 						this.pageNumber=this.textPage;
-						this.jumpPage(this.pageNumber);
+						this.jumpPage(this.pageNumber);ad
 					},
 					jumpPage(Number){
 						var str = getstr(window.location.href);
 						axios.get("http://localhost:8080/test/cropList?"+str+"&pageNumber="+Number).then((dataArr2)=>{
 							var finalStr = replaceNull(dataArr2.data)
 							dataAlter(this.data1,finalStr);
+						})
+					},
+					constuPage(){
+
+						//获取地址栏信息
+						var str = getstr(window.location.href);
+						var arr = getarr(window.location.href);
+
+						//将地址栏中的name属性进行解码
+						this.cropName=decodeURIComponent(arr.name);
+	                    //请求列名和数据列
+						axios.get("http://localhost:8080/test/cropNameList?"+str).then((dataArr1)=>{
+							axios.get("http://localhost:8080/test/cropList?"+str+"&pageNumber="+this.pageNumber).then((dataArr2)=>{
+
+								//创建最终字符串列
+								var colName = (dataArr1.data)[1].split(",");
+								var colData = replaceNull(dataArr2.data)
+								var finalData = dataOk(colName,colData)
+								//赋值到data
+								this.data1 = finalData;
+								this.count = (dataArr1.data)[0];
+
+							})
 						})
 					}
 				},
@@ -104,20 +148,236 @@
 					},
 				},
 				mounted(){
-					var str = getstr(window.location.href);
+
+					//构造结果页面
+					//获取地址栏信息
+					var crop = getstr(window.location.href);
 					var arr = getarr(window.location.href);
+
+					//将地址栏中的name属性进行解码
 					this.cropName=decodeURIComponent(arr.name);
-					//
-					axios.get("http://localhost:8080/test/cropNameList?"+str).then((dataArr1)=>{
-						axios.get("http://localhost:8080/test/cropList?"+str+"&pageNumber="+this.pageNumber).then((dataArr2)=>{
+					//请求列名和数据列
+					axios.get("http://localhost:8080/test/cropNameList?crop="+arr.crop).then((dataArr1)=>{
+						axios.get("http://localhost:8080/test/cropList?crop="+arr.crop+"&pageNumber="+this.pageNumber).then((dataArr2)=>{
+
+							//创建最终字符串列
 							var colName = (dataArr1.data)[1].split(",");
 							var colData = replaceNull(dataArr2.data)
 							var finalData = dataOk(colName,colData)
+							//赋值到data
 							this.data1 = finalData;
 							this.count = (dataArr1.data)[0];
+
+
+							axios.get("http://localhost:8080/test/cropQueryCondition?crop="+arr.crop).then((data)=>{
+								this.queryStr1=colName
+								this.queryStr2=data.data
+								//渲染查询页面
+								console.log(this.queryStr1)
+								console.log(this.queryStr2)
+								deilStr(this.queryStr1,this.queryStr2);
+							})
+
+
 						})
 					})
+
+                    /*
+					this.queryStr1 = ["列名1","列名2","列名3","列名4","列名5","列名6","列名7","列名8","列名9","列名10"];
+					this.queryStr2 = ["1-3","asdf","null","1-5",
+						"1331-1313","1331-1313","asdf,assadf,ger,asdvgrdf,ssasdcdf","1331-1313","1331-1313","2221-1313"];*/
+
+
+
+
 				}
+			})
+
+			/* jqeury构建的查询组件 */
+			//构造内容
+			function deilStr(str1,str2){
+				/*获取tr个数，td个数默认为3*/
+				let dex = str1.length%3;
+				let length = dex==0?(str1.length/3):((str1.length-(dex))/3+1);
+				/*记录遍历位置*/
+				let count = -1;
+				for(let i = 0;i<length;i++){
+					let dexNum = length
+
+					/*创建table里面的tr*/
+					let tr = $("<tr></tr>")
+					/*for循环处理里面的td*/
+					for(let j = 0;j<3;j++){
+						dexNum--;
+						/*先添加一个td再决定是否要添加内部元素*/
+						count++
+						/*如果角标数超过了数组就不加元素了*/
+						if(count<str1.length){
+
+							/*创建列名列*/
+							let td1 = $("<td></td>")
+							td1.append(str1[count])
+
+							/*判断三种模式*/
+							let td2 = $("<td></td>")
+							if(str2[count].indexOf("-")!=-1){
+
+								//构造范围输入框
+								createRangeInput(td2,str1,str2,count)
+
+							}else if(str2[count].indexOf("null")!=-1){
+
+								//构造简单输入框
+								createSimpleInput(td2,str1,count)
+
+							}else{
+
+								//构造多选框
+								createCheckBox(td2,str1,str2,count,tr,dexNum)
+
+							}
+
+							/*当td处理完毕时添加进tr*/
+							tr.append(td1);
+							tr.append(td2);
+						}else{
+							break;
+						}
+
+						/*当tr添加完毕时添加进table*/
+						$("#searchCrops").append(tr)
+					}
+				}
+			}
+
+			//构造多选框
+			function createCheckBox(td2,str1,str2,count,tr,dexNum){
+
+				let arr = str2[count].split(",");
+				//创建checkRadio字符串
+				let checkRadio = "<form id='myForm' style='overflow: hidden ;width: 220px; border: 1px solid blue'>"
+
+				$.each(arr, function(i, item){
+
+					let itemstr = "<div style='white-space: normal; word-wrap: break-word;word-break: break-all;    padding-top: 3px;float:left;line-height: 20px ;width: 70px;'><input type='checkbox' name="+str1[count]+" value="+item+" ><span>"+item+"</span></div>"
+					checkRadio=checkRadio+itemstr
+
+				})
+				checkRadio=checkRadio+"</form>";
+				//封装成checkBox
+				let checkBox = $(checkRadio)
+				td2.css({
+					"position":"relative"
+				})
+				checkBox.css({
+					"padding":"4px",
+					"position":"absolute",
+					"display":"none",
+					"z-index":dexNum,
+					"backgroundColor":"orange"
+				})
+				let tip = $("<input type='text' name="+str1[count]+" placeholder='多选种类-点击'>")
+				td2.append(tip)
+				td2.append(checkBox)
+
+				checkBox.mousedown(function (even) {
+
+					even.stopPropagation()
+				})
+				$("html").mousedown(function () {
+					checkBox.css({
+						"display":"none"
+					})
+					let result = checkBox.serializeArray();
+					let receive = "";
+					$.each(result,function (i,item) {
+						if(i==0){
+							receive = receive +  item.value
+						}else{
+							receive = receive +","+ item.value
+						}
+					})
+					tip.val(receive)
+				})
+				tip.mouseup(function () {
+
+					checkBox.css({
+						"display":"block",
+						"top":"0px",
+						"left":"0px"
+					})
+
+				})
+
+
+			}
+			//构造普通输入框
+			function createSimpleInput(td2,str1,count){
+				let inputStr = "<input type='text' name="+str1[count]+">";
+				let imput = $(inputStr)
+				imput.attr("placeholder","输入条件")
+				td2.append(imput)
+			}
+			//构造范围输入框
+				function createRangeInput(td2,str1,str2,count){
+
+					let inputStr = "<input style='width:117.5px' type='text' name="+str1[count]+">";
+					/* let check = ""*/
+					let selectButton = "<select name="+str1[count]+"><option value =\">\">></option>\n" +
+							"                    <option value =\"<\"><</option>\n" +
+							"                    <option value=\">=\">>=</option>\n" +
+							"                    <option value=\"<=\"><=</option>\n" +
+							"                    <option value=\"<>\"><></option>\n" +
+							"                </select>"
+
+					let imput = $(inputStr)
+					imput.attr("placeholder","范围:"+str2[count])
+
+					td2.append(selectButton)
+				td2.append(imput)
+			}
+
+			//提交按钮
+			$("#btn2").click(function () {
+				/*{ 最后以此种格式返回后端 令后端查询
+                "column1":["data1"],
+                "column2":["data21","data22"],
+                "column3":[">=data31"],
+                }*/
+				//将表格里的数据提出
+				let array = $("#search").serializeArray();
+				console.log(array)
+				//返回的字符串
+				let searchStr = {};
+				//根据array构建searchStr
+				for(let i = 0;i<array.length;i++) {
+					if (i != array.length - 1 && array[i].name == array[i + 1].name) {
+						//不是最后一个且下一个和自己的名字一样
+						if (array[i + 1].value!= "") {
+							let str = array[i].value + array[i + 1].value
+							searchStr[array[i + 1].name] = str
+						}
+						i++;
+
+					} else {
+						//是最后一个或者下一个和自己的名字不一样
+						if (array[i].value != "") {
+							//值不为空
+							if (array[i].value.indexOf(",") == -1) {
+								//不是多选框
+								searchStr[array[i].name] = array[i].value
+							} else {
+								//是多选框
+								let arr = array[i].value.split(",")
+								searchStr[array[i].name] = arr
+							}
+						}
+
+					}
+
+				}
+
+				console.log(searchStr)
 			})
 		</script>
 	</body>

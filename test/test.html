@@ -1,41 +1,90 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML>
-<HEAD>
+<!DOCTYPE html>
+<html>
 
-</HEAD>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
     <style type="text/css">
+        /*div{
+            width: 100px;
+            background-color: red;
+            float: left;
+            word-wrap: break-word;
+        }*/
+        /*span{
 
+        }*/
+        #adfdas{
+
+            position: relative;
+        }
+        #adfdas:after{
+            content: "";
+            display: block;
+            font-size: 0px;
+        }
     </style>
-<BODY>
+</head>
+    <link rel="stylesheet"  type="text/css" href="../css/cropInfo.css" />
+    <body>
+<div id="adfdas">
+    <form id="myForm" style="overflow: hidden; width: 220px; border: 1px solid blue; padding: 4px; position: absolute; display: block; z-index: 10; background-color: orange; top: 0px; left: 0px;">
+        <div style="padding-top: 3px;float:left;line-height: 20px ;width: 70px;">
+            <input type="checkbox" name="保存单位" value="中国农科院果树所">
+            <span>中国农科院果树所</span>
+        </div>
+        <div style="padding-top: 3px;float:left;line-height: 20px ;width: 70px;">
+            <input type="checkbox" name="保存单位" value="吉林省农科院果树所">
+            <span>吉林省农科院果树所</span>
+        </div>
+    </form>
+</div>
 
-        <input type="text" name="haha1" class="tr">
 
-        <input type="checkbox" name="haha2" value="gadsg">haadsf
-        <input type="checkbox" name="haha2" value="gasdg">hadf
-        <input type="checkbox" name="haha2" value="gasdfsg">haadsf
 
-        <span class="hahah">safdddf</span>
-        <span class="hahah">safdsff</span>
-        <span class="hahah">safdfddf</span>
-
-        <select name="tsda">
-            <option value="addfewdwe1">sd3fs4d</option>
-            <option value="addfewdwe2">sd3fdsf4d</option>
-            <option value="addfewdwe3">sdfdss4d</option>
-            <option value="addfewdwe4">sdf4sd</option>
-        </select>
-
+        <script src="../js/vue/axios.js"></script>
+        <script src="../js/vue/vue.js"></script>
+        <script src="../js/cropInfo.js"></script>
         <script src="../js/jquery/jquery-1.12.3.js"></script>
-<script>
 
-    alert($(".hahah"))
-      $.each($(".hahah"),function f(i,item) {
-            console.log(item+"----")
-      })
-</script>
+       <!-- <script type="module">
+                //线上接口地址
 
-</BODY>
-</HTML>
+                let dex1 = ""
+
+
+                var app = new Vue({
+
+                    el:"",
+                    data:{
+                        dex2:"",
+
+                    },
+                    methods:{
+
+                    },
+                    computed:{
+
+                    },
+                    mounted(){
+
+                    },
+
+
+                })
+
+
+
+                $("#dafsa").click(function () {
+                    dex1 = $("input").val()
+                    alert("adfadfsdfdwdsf")
+                })
+        </script>-->
+    </body>
+
+</html>
+
+
 
 
 

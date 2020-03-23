@@ -44,58 +44,102 @@ body,
 	width: 220px;
 	height: 60px;
 }
-
-#main table {
+#main1{
+	width: 760px;
+}
+#main1 table {
 	border-collapse: collapse;
 }
 
-#main table {
+#main1 table {
 	table-layout: fixed;
 	font-size: 11px;
 }
 
-#main table tr td {
+#main1 table tr td {
 	background-color: gainsboro;
 	width: 100px;
 	height: 20px;
 	white-space: nowrap;
 }
 
-#main table tr:nth-child(even) td:nth-child(even) {
+#main1 table tr:nth-child(even) td:nth-child(even) {
 	background-color: white;
 }
 
-#main table tr td:nth-child(even) {
+#main1 table tr td:nth-child(even) {
 	padding-right: 70px;
 	font-size: 12px;
 }
 
-#main table tr td:nth-child(odd) {
+#main1 table tr td:nth-child(odd) {
 	font-weight: 700;
 	padding-right: 10px;
 }
 
-#main table tr:nth-child(odd) td:nth-child(odd) {
+#main1 table tr:nth-child(odd) td:nth-child(odd) {
 	background: #C4C4C4;
 }
 
-#main table tr td {
+#main1 table tr td {
 	border: 1px solid gainsboro;
 }
 
-#main>div ul {
+#search table {
+	border-collapse: collapse;
+}
+#search{
+
+	margin-top:10px ;
+	width: 760px;
+}
+#search table {
+	table-layout: fixed;
+	font-size: 11px;
+}
+
+#search table tr td {
+	background-color: gainsboro;
+	width: 100px;
+	height: 20px;
+	white-space: nowrap;
+
+}
+
+#search table tr:nth-child(even) td:nth-child(even) {
+	background-color: white;
+}
+
+#search table tr td:nth-child(even) {
+
+	font-size: 12px;
+}
+
+#search table tr td:nth-child(odd) {
+	font-weight: 700;
+	padding-right: 10px;
+}
+
+#search table tr:nth-child(odd) td:nth-child(odd) {
+	background: #C4C4C4;
+}
+
+#search table tr td {
+	border: 1px solid gainsboro;
+}
+#main1>div ul {
 	display: flex;
 	list-style: none;
 	margin-bottom: 3px;
 }
 
-#main>div ul li {
+#main1>div ul li {
 	margin-left: 3px;
 	line-height: 23px;
 	font-size: 12px;
 	text-align: center;
 }
-#main>div ul li a {
+#main1>div ul li a {
 	width: 40px;
 	height: 20px;
 	margin-right: 10px;

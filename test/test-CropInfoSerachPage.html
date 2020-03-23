@@ -8,36 +8,26 @@
 
 <body>
     <div >
-
       <form id="search" >
-
             <table id="searchCrops">
 
             </table>
-        </form>
+      </form>
         <button id="btn1">anniu</button>
         <button id="btn2">ssssss</button>
     </div>
-
-
 <script src="../js/jquery/jquery-1.12.3.js"></script>
 
 <script>
-
-    $("#btn2").click(function () {
-        console.log($("#search").serializeArray())
-    })
+    //添加按钮
     $("#btn1").click(function () {
-        var str1 = ["列名1","列名2","列名3","列名4","列名5","列名6","列名7","列名4","列名4","列名343"];
+        var str1 = ["列名1","列名2","列名3","列名4","列名5","列名6","列名7","列名8","列名9","列名10"];
         var str2 = ["1-","asdf,assadf,ger,asdvgrdf,ssasdcdf","null","1-",
             "1331-1313","1331-1313","asdf,assadf,ger,asdvgrdf,ssasdcdf","1331-1313","1331-1313","2221-1313"];
-
+        //传入两个字符串,创建table里的内容
         deilStr(str1,str2);
     })
-    /*["列名1","列名2","列名3","列名4","列名5","列名6","列名7"]
-    ["1331-1313","asdf,assadf,ger,asdvgrdf,ssasdcdf","null","1331-1313",
-        "1331-1313","1331-1313","asdf,assadf,ger,asdvgrdf,ssasdcdf"]
-    * */
+    //构造内容
     function deilStr(str1,str2){
         /*获取tr个数，td个数默认为3*/
         let dex = str1.length%3;
@@ -97,21 +87,15 @@
                         td2.css({
                             "position":"relative"
                         })
-
-
-
                         checkBox.css({
                             "position":"absolute",
                             "display":"none",
                             "backgroundColor":"red"
                         })
-
                         let tip = $("<input type='text' name="+str1[count]+" placeholder='请输入需要显示的种类'>")
-
                         td2.append(tip)
                         td2.append(checkBox)
-
-                            $(document).click(function () {
+                        $(document).click(function () {
                                 checkBox.css({
                                     "display":"none"
                                 })
@@ -126,8 +110,6 @@
                                 })
                                 tip.val(receive)
                             })
-
-
                         td2.click(function (event) {
                             event.stopPropagation()
                             checkBox.css({
@@ -166,7 +148,48 @@
 
 
     }
+    //提交按钮
+    $("#btn2").click(function () {
+        /*{ 最后以此种格式返回后端 令后端查询
+        "column1":["data1"],
+        "column2":["data21","data22"],
+        "column3":[">=data31"],
+        }*/
+        //将表格里的数据提出
+        let array = $("#search").serializeArray();
+        console.log(array)
+        //返回的字符串
+        let searchStr = {};
+        //根据array构建searchStr
+        for(let i = 0;i<array.length;i++) {
+            if (i != array.length - 1 && array[i].name == array[i + 1].name) {
+                //不是最后一个且下一个和自己的名字一样
+                if (array[i + 1].value!= "") {
+                    let str = array[i].value + array[i + 1].value
+                    searchStr[array[i + 1].name] = str
+                }
+                i++;
 
+            } else {
+                //是最后一个或者下一个和自己的名字不一样
+                if (array[i].value != "") {
+                    //值不为空
+                    if (array[i].value.indexOf(",") == -1) {
+                        //不是多选框
+                        searchStr[array[i].name] = array[i].value
+                    } else {
+                        //是多选框
+                        let arr = array[i].value.split(",")
+                        searchStr[array[i].name] = arr
+                    }
+                }
+
+            }
+
+        }
+
+        console.log(searchStr)
+    })
 </script>
 </body>
 
