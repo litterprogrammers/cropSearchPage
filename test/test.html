@@ -5,41 +5,16 @@
     <meta charset="utf-8" />
     <title></title>
     <style type="text/css">
-        /*div{
-            width: 100px;
-            background-color: red;
-            float: left;
-            word-wrap: break-word;
-        }*/
-        /*span{
 
-        }*/
-        #adfdas{
 
-            position: relative;
-        }
-        #adfdas:after{
-            content: "";
-            display: block;
-            font-size: 0px;
-        }
+
+
     </style>
 </head>
-    <link rel="stylesheet"  type="text/css" href="../css/cropInfo.css" />
-    <body>
-<div id="adfdas">
-    <form id="myForm" style="overflow: hidden; width: 220px; border: 1px solid blue; padding: 4px; position: absolute; display: block; z-index: 10; background-color: orange; top: 0px; left: 0px;">
-        <div style="padding-top: 3px;float:left;line-height: 20px ;width: 70px;">
-            <input type="checkbox" name="保存单位" value="中国农科院果树所">
-            <span>中国农科院果树所</span>
-        </div>
-        <div style="padding-top: 3px;float:left;line-height: 20px ;width: 70px;">
-            <input type="checkbox" name="保存单位" value="吉林省农科院果树所">
-            <span>吉林省农科院果树所</span>
-        </div>
-    </form>
-</div>
 
+    <body>
+
+        <div id="adfdas">sdfdsf</div>
 
 
         <script src="../js/vue/axios.js"></script>
@@ -47,17 +22,16 @@
         <script src="../js/cropInfo.js"></script>
         <script src="../js/jquery/jquery-1.12.3.js"></script>
 
-       <!-- <script type="module">
+       <script type="module">
                 //线上接口地址
 
-                let dex1 = ""
 
+                let dex = ["awd"]
 
                 var app = new Vue({
 
-                    el:"",
+                    el:"#adfdas",
                     data:{
-                        dex2:"",
 
                     },
                     methods:{
@@ -67,19 +41,20 @@
 
                     },
                     mounted(){
-
+                        setInterval(()=>{
+                            console.log("监听"+dex)
+                        },3000)
                     },
-
-
                 })
 
 
+                $("#adfdas").click(function () {
+                    let arr = ["sadfads"]
+                    dex=arr
 
-                $("#dafsa").click(function () {
-                    dex1 = $("input").val()
-                    alert("adfadfsdfdwdsf")
                 })
-        </script>-->
+
+        </script>
     </body>
 
 </html>
