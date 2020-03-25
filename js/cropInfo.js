@@ -11,9 +11,10 @@ function getstr(urlLocal) {
 
 	return urlLocal.substr(urlLocal.indexOf("?") + 1);
 }
-
+//return  {[crop:applpe],[name:苹果]}
 function getarr(urlLocal) {
 	var keyValue = {};
+
 	var arr = urlLocal.substr(urlLocal.indexOf("?") + 1).split("&");
 
 	for(var i = 0; i < arr.length; i++) {
@@ -27,9 +28,7 @@ function getarr(urlLocal) {
 function dataAlter(arr, data) {
 	for(var a = 0; a < data.length; a++) {
 		var dex = transform2(a + 1)
-	console.log(dex[0])
 		arr[dex[0]].splice(dex[1],1,(data[a]));
-		
 	}
 	return arr;
 }
