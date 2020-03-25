@@ -25,17 +25,17 @@
 				<div id="main1" v-show="changeMainTable==1">
 					<div>
 						<ul>
-							<li><span v-cloak>共找到{{count}}个结果|</span></li>
+							<li><span v-cloak>共找到{{PageCount}}个结果|</span></li>
 							<li><a href="" @click.prevent="firstPage">第一页</a></li>
 							<li><a href="" @click.prevent="prePage" :class="{'disable':pageNumber==1}">上一页</a></li>
-							<li><a href="" @click.prevent="nextPage" :class="{'disable':pageNumber==count}">下一页</a></li>
+							<li><a href="" @click.prevent="nextPage" :class="{'disable':pageNumber==PageCount}">下一页</a></li>
 							<li><a href="" @click.prevent="lastPage">最后一页</a></li>
-							<li><a href="" @click.prevent="getPage">跳转</a><input type="text" v-model.lazy="textPage" @keyup.enter="checkData" /></li>
+							<li><a href="" @click.prevent="getPage">跳转</a><input type="text" v-model.lazy="textPage" @keyup.enter="getPage" /></li>
 							<li><span>当前{{pageNumber}}页</span></li>
 						</ul>
 					</div>
 					<table>
-						<tr v-for="(item,index) in data1" :key="index" v-cloak>
+						<tr v-for="(item,index) in colString" :key="index" v-cloak>
 							<td>{{item[0]}}</td>
 							<td>{{item[1]}}</td>
 							<td>{{item[2]}}</td>
@@ -61,25 +61,34 @@
 		<script src="js/vue/vue.js"></script>
 		<script src="js/cropInfo.js"></script>
 		<script >
-			let queryDex = ""
+			//全局属性->查询条件
+			let queryDex ={}
 
 			var s = new Vue({
 				el:"#pannel",
 				data:{
-					data1: [],
-					count:0,
+					//组成页面的循环字符串
+					colString: [],
+					//页数
+					PageCount:0,
+					//当前页码
 					pageNumber:1,
+					//输入框内的狮子
 					textPage:1,
+					//作物中文名称
 					cropName:"wheat",
+					//作物英文名称
+					cropEnName:"wheat",
+					//控制查询面板和结果面板显示的角标
 					changeMainTable:2,
+					//查询的列明
 					queryStr1:[],
+					//查询的数据
 					queryStr2:[],
-					myQueryDex:"",
+					//查询的条件
+					myQueryDex:{},
 				},
 				methods:{
-					checkData(){
-						this.getPage()
-					},
 					showMain1(){
 						this.changeMainTable=1
 					},
@@ -99,56 +108,51 @@
 						this.jumpPage(this.pageNumber);
 					},
 					lastPage(){
-						this.pageNumber=this.count;
+						this.pageNumber=this.PageCount;
 						this.jumpPage(this.pageNumber);
 					},
 					getPage(){
 						this.pageNumber=this.textPage;
-						this.jumpPage(this.pageNumber);ad
+						this.jumpPage(this.pageNumber);
 					},
 					jumpPage(Number){
-						var str = getstr(window.location.href);
-						axios.get("http://localhost:8080/test/cropList?"+str+"&pageNumber="+Number).then((dataArr2)=>{
-							var finalStr = replaceNull(dataArr2.data)
-							dataAlter(this.data1,finalStr);
+						//从后端获取查询到 第一页的数据（jumpPage获取）
+						axios.post("http://localhost:8080/test/cropQuery",{
+							querySelect : this.myQueryDex,
+							crop : this.cropEnName,
+							pageNumber : Number
+						}).then((dataArr2)=>{
+							dataArr2.data.data
+							console.log(dataArr2)
+							var replaceStr = replaceNull(dataArr2.data.data)
+							dataAlter(this.colString,replaceStr);
+							this.PageCount = dataArr2.data.count
+							this.changeMainTable=1
 						})
 					},
-					constuPage(){
 
-						//获取地址栏信息
-						var str = getstr(window.location.href);
-						var arr = getarr(window.location.href);
-
-						//将地址栏中的name属性进行解码
-						this.cropName=decodeURIComponent(arr.name);
-	                    //请求列名和数据列
-						axios.get("http://localhost:8080/test/cropNameList?"+str).then((dataArr1)=>{
-							axios.get("http://localhost:8080/test/cropList?"+str+"&pageNumber="+this.pageNumber).then((dataArr2)=>{
-
-								//创建最终字符串列
-								var colName = (dataArr1.data)[1].split(",");
-								var colData = replaceNull(dataArr2.data)
-								var finalData = dataOk(colName,colData)
-								//赋值到data
-								this.data1 = finalData;
-								this.count = (dataArr1.data)[0];
-
-							})
-						})
-					}
 				},
 				watch:{
 					textPage:function (val,oldval) {
 						var reg = new RegExp(/^[0-9]+$/);
-							if(reg.test(val)&&(parseInt(val)>=1&&parseInt(val)<=this.count)){
+							if(reg.test(val)&&(parseInt(val)>=1&&parseInt(val)<=this.PageCount)){
 							}else{
 								this.textPage=oldval;
-								alert("请输入1-"+this.count+"长度的数字")
+								alert("请输入1-"+this.PageCount+"长度的数字")
 							}
 					},
+
 				},
 				mounted(){
+					this.myQueryDex=queryDex
+					//添加监听器
+					setInterval(()=>{
 
+						if(this.myQueryDex!=queryDex){
+							this.myQueryDex=queryDex
+							this.jumpPage(1)
+						}
+					},1000)
 					//构造结果页面
 					//获取地址栏信息
 					var crop = getstr(window.location.href);
@@ -156,29 +160,26 @@
 
 					//将地址栏中的name属性进行解码
 					this.cropName=decodeURIComponent(arr.name);
+					this.cropEnName = arr.crop
 					//请求列名和数据列
-					axios.get("http://localhost:8080/test/cropNameList?crop="+arr.crop).then((dataArr1)=>{
-						axios.get("http://localhost:8080/test/cropList?crop="+arr.crop+"&pageNumber="+this.pageNumber).then((dataArr2)=>{
+					axios.get("http://localhost:8080/test/cropNameList?crop="+this.cropEnName).then((dataArr1)=>{
+						axios.get("http://localhost:8080/test/cropList?crop="+this.cropEnName+"&pageNumber="+this.pageNumber).then((dataArr2)=>{
 
-							//创建最终字符串列
+							//合并列名串和数据串
 							var colName = (dataArr1.data)[1].split(",");
 							var colData = replaceNull(dataArr2.data)
 							var finalData = dataOk(colName,colData)
-							//赋值到data
-							this.data1 = finalData;
-							this.count = (dataArr1.data)[0];
+							//赋值到colString
+							this.colString = finalData;
+							this.PageCount = (dataArr1.data)[0];
 
-
+							//渲染查询页面
 							axios.get("http://localhost:8080/test/cropQueryCondition?crop="+arr.crop).then((data)=>{
 								this.queryStr1=colName
 								this.queryStr2=data.data
 								//渲染查询页面
-								console.log(this.queryStr1)
-								console.log(this.queryStr2)
 								deilStr(this.queryStr1,this.queryStr2);
 							})
-
-
 						})
 					})
 
@@ -255,11 +256,11 @@
 
 				let arr = str2[count].split(",");
 				//创建checkRadio字符串
-				let checkRadio = "<form id='myForm' style='overflow: hidden ;width: 220px; border: 1px solid blue'>"
+				let checkRadio = "<form class='myForm' style='overflow: hidden ;width: 220px; border: 1px solid blue'>"
 
 				$.each(arr, function(i, item){
 
-					let itemstr = "<div style='white-space: normal; word-wrap: break-word;word-break: break-all;    padding-top: 3px;float:left;line-height: 20px ;width: 70px;'><input type='checkbox' name="+str1[count]+" value="+item+" ><span>"+item+"</span></div>"
+					let itemstr = "<div style='white-space: normal; word-wrap: break-word;word-break: break-all; padding-top: 3px;float:left;line-height: 20px ;width: 70px;'><input type='checkbox' name="+str1[count]+" value="+item+"><span>"+item+"</span></div>"
 					checkRadio=checkRadio+itemstr
 
 				})
@@ -281,7 +282,6 @@
 				td2.append(checkBox)
 
 				checkBox.mousedown(function (even) {
-
 					even.stopPropagation()
 				})
 				$("html").mousedown(function () {
@@ -289,6 +289,7 @@
 						"display":"none"
 					})
 					let result = checkBox.serializeArray();
+
 					let receive = "";
 					$.each(result,function (i,item) {
 						if(i==0){
@@ -319,7 +320,7 @@
 				td2.append(imput)
 			}
 			//构造范围输入框
-				function createRangeInput(td2,str1,str2,count){
+			function createRangeInput(td2,str1,str2,count){
 
 					let inputStr = "<input style='width:117.5px' type='text' name="+str1[count]+">";
 					/* let check = ""*/
@@ -340,22 +341,22 @@
 			//提交按钮
 			$("#btn2").click(function () {
 				/*{ 最后以此种格式返回后端 令后端查询
-                "column1":["data1"],
+                "column1":["colString"],
                 "column2":["data21","data22"],
                 "column3":[">=data31"],
                 }*/
 				//将表格里的数据提出
 				let array = $("#search").serializeArray();
-				console.log(array)
+
 				//返回的字符串
-				let searchStr = {};
+				let dexarr = {}
 				//根据array构建searchStr
 				for(let i = 0;i<array.length;i++) {
 					if (i != array.length - 1 && array[i].name == array[i + 1].name) {
 						//不是最后一个且下一个和自己的名字一样
 						if (array[i + 1].value!= "") {
 							let str = array[i].value + array[i + 1].value
-							searchStr[array[i + 1].name] = str
+							dexarr[array[i + 1].name] = str
 						}
 						i++;
 
@@ -365,19 +366,21 @@
 							//值不为空
 							if (array[i].value.indexOf(",") == -1) {
 								//不是多选框
-								searchStr[array[i].name] = array[i].value
+								dexarr[array[i].name] = array[i].value
 							} else {
 								//是多选框
 								let arr = array[i].value.split(",")
-								searchStr[array[i].name] = arr
+								dexarr[array[i].name] = arr
 							}
 						}
 
 					}
 
 				}
+				//将构造好的查询字符串赋值给全局变量
+				queryDex = dexarr
 
-				console.log(searchStr)
+
 			})
 		</script>
 	</body>
